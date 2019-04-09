@@ -7,6 +7,15 @@ var renderer = null,
   sphereEnvMapped = null,
   orbitControls = null;
 
+var directionalLight = null;
+var spotLight = null;
+var pointLight = null;
+var ambientLight = null;
+
+var mapUrl = "./images/Environment/floor.jpg";
+var objLoader = null;
+var mtlLoader = null;
+
 var duration = 20000; // ms
 var currentTime = Date.now();
 
@@ -17,7 +26,6 @@ function animate() {
   currentTime = now;
   var fract = deltat / duration;
   var angle = Math.PI * 2 * fract;
-
   // Rotate the sphere group about its Y axis
   group.rotation.y += angle;
 }
@@ -37,11 +45,108 @@ function run() {
   orbitControls.update();
 }
 
+function loadStore()
+{
+  if(!objLoader)
+    objLoader = new THREE.OBJLoader();
+
+    objLoader.load(
+      'models/store/stonetee.obj',
+
+      function(object)
+      {    
+          object.traverse( function ( child ) 
+          {
+              if ( child instanceof THREE.Mesh ) 
+              {
+                  child.castShadow = true;
+                  child.receiveShadow = true;
+              }
+          } );            
+          player = object;
+          player.scale.set(1,1,1);
+          player.bbox = new THREE.Box3()
+          player.bbox.setFromObject(player)
+          player.position.z = 0;
+          player.position.x = 0;
+          player.position.y = 0;
+          player.rotation.y = Math.PI /2;
+          group.add(player);
+      },
+      function ( xhr ) {
+
+          console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
+
+          player_loaded = ( xhr.loaded / xhr.total * 100 )
+
+          if (player_loaded >= 100 && bool){
+              console.log("controls")
+              controls = new THREE.PointerLockControls(group);
+              scene.add(controls.getObject());
+              bool = false;
+          }
+
+      },
+      function ( error ) {
+
+          console.log( 'An error happened' );
+    });
+    
+}
+function loadJacketModel()
+{
+  if(!objLoader)
+    objLoader = new THREE.OBJLoader();
+
+    objLoader.load(
+      'models/clothes/BlackLeatherJacket/Black Leather Jacket.obj',
+
+      function(object)
+      {    
+          object.traverse( function ( child ) 
+          {
+              if ( child instanceof THREE.Mesh ) 
+              {
+                  child.castShadow = true;
+                  child.receiveShadow = true;
+              }
+          } );            
+          player = object;
+          player.scale.set(1,1,1);
+          player.bbox = new THREE.Box3()
+          player.bbox.setFromObject(player)
+          player.position.z = 0;
+          player.position.x = 0;
+          player.position.y = -50;
+          player.scale.set(0.5,0.5,0.5);
+          player.rotation.y = Math.PI /2;
+          group.add(player);
+      },
+      function ( xhr ) {
+
+          console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
+
+          player_loaded = ( xhr.loaded / xhr.total * 100 )
+
+          if (player_loaded >= 100 && bool){
+              console.log("controls")
+              controls = new THREE.PointerLockControls(group);
+              scene.add(controls.getObject());
+              bool = false;
+          }
+
+      },
+      function ( error ) {
+
+          console.log( 'An error happened' );
+    });
+    
+}
+
 function setLightColor(light, r, g, b) {
   r /= 255;
   g /= 255;
   b /= 255;
-
   light.color.setRGB(r, g, b);
 }
 
@@ -57,22 +162,15 @@ function toggleTexture() {
   }
 }
 
-var directionalLight = null;
-var spotLight = null;
-var pointLight = null;
-var ambientLight = null;
-var mapUrl = "./images/whiteMarmol.jpg";
-
-function createScene(canvas) {
-
-  // Create the Three.js renderer and attach it to our canvas
+function createScene(canvas) 
+{
   renderer = new THREE.WebGLRenderer({
     canvas: canvas,
     antialias: true
   });
 
   // Set the viewport size
-  renderer.setSize(canvas.width, canvas.height);
+  renderer.setSize(window.innerWidth -20, window.innerHeight -20);
 
   // Create a new Three.js scene
   scene = new THREE.Scene();
@@ -109,12 +207,13 @@ function createScene(canvas) {
   // Create a group to hold the spheres
   group = new THREE.Object3D;
   root.add(group);
-
+  loadStore();
+  loadJacketModel();
   // Create a texture map
 
   var map = new THREE.TextureLoader().load(mapUrl);
   map.wrapS = map.wrapT = THREE.RepeatWrapping;
-  map.repeat.set(4, 2);
+  map.repeat.set(10,10);
 
   var color = 0xffffff;
   // Put in a ground plane to show off the lighting
@@ -168,4 +267,18 @@ function createScene(canvas) {
 
   // Now add the group to our scene
   scene.add(root);
+
+  //load skybox
+  var skyGeometry = new THREE.CubeGeometry( 1500, 1500, 1500 );		
+	var cubeMaterials = [
+        new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load( "images/Skybox/nightsky_ft.png" ), side: THREE.DoubleSide }), //front side
+        new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load( 'images/Skybox/nightsky_bk.png' ), side: THREE.DoubleSide }), //back side
+        new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load( 'images/Skybox/nightsky_up.png' ), side: THREE.DoubleSide }), //up side
+        new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load( 'images/Skybox/nightsky_dn.png' ), side: THREE.DoubleSide }), //down side
+        new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load( 'images/Skybox/nightsky_rt.png' ), side: THREE.DoubleSide }), //right side
+        new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load( 'images/Skybox/nightsky_lf.png' ), side: THREE.DoubleSide }) //left side
+    ];
+	var skyMaterial = new THREE.MeshFaceMaterial( cubeMaterials );
+	var skyBox = new THREE.Mesh( skyGeometry, skyMaterial );
+	group.add(skyBox);
 }
