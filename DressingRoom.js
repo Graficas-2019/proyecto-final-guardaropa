@@ -45,7 +45,7 @@ function run() {
   orbitControls.update();
 }
 
-function loadStore()
+/*function loadStore()
 {
   if(!objLoader)
     objLoader = new THREE.OBJLoader();
@@ -64,12 +64,12 @@ function loadStore()
               }
           } );            
           player = object;
-          player.scale.set(1,1,1);
+          player.scale.set(3,3,3);
           player.bbox = new THREE.Box3()
           player.bbox.setFromObject(player)
           player.position.z = 0;
-          player.position.x = 0;
-          player.position.y = 0;
+          player.position.x = 200;
+          player.position.y = -50;
           player.rotation.y = Math.PI /2;
           group.add(player);
       },
@@ -92,6 +92,47 @@ function loadStore()
           console.log( 'An error happened' );
     });
     
+}*/
+
+function loadStore()
+{  
+  if(!mtlLoader)
+  {
+    mtlLoader = new THREE.MTLLoader();
+    mtlLoader.load( 'models/store/store.mtl', function( materials ) 
+    {  
+      materials.preload();
+      objLoader = new THREE.OBJLoader();
+      objLoader.setMaterials( materials );
+      objLoader.load(
+        'models/store/store.obj',
+  
+        function(object)
+        {    
+            object.traverse( function ( child ) 
+            {
+                if ( child instanceof THREE.Mesh ) 
+                {
+                    child.castShadow = true;
+                    child.receiveShadow = true;
+                }
+            } );            
+            player = object;
+            player.scale.set(3,3,3);
+            player.bbox = new THREE.Box3()
+            player.bbox.setFromObject(player)
+            player.position.z = 0;
+            player.position.x = 200;
+            player.position.y = -50;
+            player.rotation.y = Math.PI /2;
+            group.add(player);
+        },
+        function ( error ) {
+  
+            console.log( 'An error happened' );
+      });
+    })
+  }
 }
 function loadJacketModel()
 {
@@ -112,29 +153,15 @@ function loadJacketModel()
               }
           } );            
           player = object;
-          player.scale.set(1,1,1);
+          player.scale.set(0.1,0.1,0.1);
           player.bbox = new THREE.Box3()
           player.bbox.setFromObject(player)
           player.position.z = 0;
           player.position.x = 0;
-          player.position.y = -50;
+          player.position.y = -60;
           player.scale.set(0.5,0.5,0.5);
           player.rotation.y = Math.PI /2;
           group.add(player);
-      },
-      function ( xhr ) {
-
-          console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
-
-          player_loaded = ( xhr.loaded / xhr.total * 100 )
-
-          if (player_loaded >= 100 && bool){
-              console.log("controls")
-              controls = new THREE.PointerLockControls(group);
-              scene.add(controls.getObject());
-              bool = false;
-          }
-
       },
       function ( error ) {
 
@@ -177,7 +204,7 @@ function createScene(canvas)
 
   // Add  a camera so we can view the scene
   camera = new THREE.PerspectiveCamera(45, canvas.width / canvas.height, 1, 4000);
-  camera.position.set(-2, 6, 12);
+  camera.position.set(100, 50, 100);
   scene.add(camera);
 
   orbitControls = new THREE.OrbitControls(camera, renderer.domElement);
@@ -192,15 +219,6 @@ function createScene(canvas)
   directionalLight.position.set(.5, 0, 3);
   root.add(directionalLight);
 
-  pointLight = new THREE.PointLight(0x0000ff, 1, 20);
-  pointLight.position.set(-5, 2, -10);
-  root.add(pointLight);
-
-  spotLight = new THREE.SpotLight(0x00ff00);
-  spotLight.position.set(2, 2, 5);
-  spotLight.target.position.set(2, 0, 4);
-  root.add(spotLight);
-
   ambientLight = new THREE.AmbientLight(0x888888);
   root.add(ambientLight);
 
@@ -209,76 +227,7 @@ function createScene(canvas)
   root.add(group);
   loadStore();
   loadJacketModel();
-  // Create a texture map
-
-  var map = new THREE.TextureLoader().load(mapUrl);
-  map.wrapS = map.wrapT = THREE.RepeatWrapping;
-  map.repeat.set(10,10);
-
-  var color = 0xffffff;
-  // Put in a ground plane to show off the lighting
-  geometry = new THREE.PlaneGeometry(200, 200, 50, 50);
-  var mesh = new THREE.Mesh(geometry, new THREE.MeshPhongMaterial({
-    color: color,
-    map: map,
-    side: THREE.DoubleSide
-  }));
-  mesh.rotation.x = -Math.PI / 2;
-  mesh.position.y = -4.02;
-
-  // Add the mesh to our group
-  group.add(mesh);
-
-  // Create the cube geometry
-  geometry = new THREE.CubeGeometry(2, 2, 2);
-
-  // And put the geometry and material together into a mesh
-  mesh = new THREE.Mesh(geometry, new THREE.MeshPhongMaterial({
-    color: color
-  }));
-  mesh.position.y = 3;
-
-  // Add the mesh to our group
-  group.add(mesh);
-
-  // Create the sphere geometry
-  geometry = new THREE.SphereGeometry(Math.sqrt(2), 50, 50);
-
-  // And put the geometry and material together into a mesh
-  mesh = new THREE.Mesh(geometry, new THREE.MeshPhongMaterial({
-    color: color
-  }));
-  mesh.position.y = 0;
-
-  // Add the mesh to our group
-  group.add(mesh);
-
-  // Create the cylinder geometry
-  geometry = new THREE.CylinderGeometry(1, 2, 2, 50, 10);
-
-  // And put the geometry and material together into a mesh
-  mesh = new THREE.Mesh(geometry, new THREE.MeshPhongMaterial({
-    color: color
-  }));
-  mesh.position.y = -3;
-
-  // Add the  mesh to our group
-  group.add(mesh);
 
   // Now add the group to our scene
   scene.add(root);
-
-  //load skybox
-  var skyGeometry = new THREE.CubeGeometry( 1500, 1500, 1500 );		
-	var cubeMaterials = [
-        new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load( "images/Skybox/nightsky_ft.png" ), side: THREE.DoubleSide }), //front side
-        new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load( 'images/Skybox/nightsky_bk.png' ), side: THREE.DoubleSide }), //back side
-        new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load( 'images/Skybox/nightsky_up.png' ), side: THREE.DoubleSide }), //up side
-        new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load( 'images/Skybox/nightsky_dn.png' ), side: THREE.DoubleSide }), //down side
-        new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load( 'images/Skybox/nightsky_rt.png' ), side: THREE.DoubleSide }), //right side
-        new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load( 'images/Skybox/nightsky_lf.png' ), side: THREE.DoubleSide }) //left side
-    ];
-	var skyMaterial = new THREE.MeshFaceMaterial( cubeMaterials );
-	var skyBox = new THREE.Mesh( skyGeometry, skyMaterial );
-	group.add(skyBox);
 }
