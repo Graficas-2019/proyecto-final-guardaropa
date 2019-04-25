@@ -179,7 +179,8 @@ function setLightColor(light, r, g, b) {
 
 function toggleLight(light) {}
 
-function toggleTexture() {
+function toggleTexture() 
+{
   textureOn = !textureOn;
   var names = materialName.split("-");
   if (!textureOn) {
