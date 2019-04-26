@@ -169,6 +169,32 @@ function loadJacketModel()
     });
     
 }
+function changeJacketMaterial(textureUri)
+{
+  texture = new THREE.TextureLoader().load(textureUri);
+  lambert = new THREE.MeshPhongMaterial({color: 0xffffff, map: texture});
+  objLoader = new THREE.OBJLoader();
+  objLoader.load(
+    'models/clothes/BlackLeatherJacket/Black Leather Jacket.obj', 
+    function ( object ) {
+      object.traverse(function(child) {
+          if (child instanceof THREE.Mesh){
+              child.material = lambert;
+          }
+      });
+      player = object;
+      player.scale.set(0.1,0.1,0.1);
+      player.bbox = new THREE.Box3()
+      player.bbox.setFromObject(player)
+      player.position.z = 0;
+      player.position.x = 0;
+      player.position.y = -60;
+      player.scale.set(0.5,0.5,0.5);
+      player.rotation.y = Math.PI /2;
+      group.add(player);
+  }//, onProgress, onError 
+  );
+}
 
 function setLightColor(light, r, g, b) {
   r /= 255;
@@ -227,7 +253,8 @@ function createScene(canvas)
   group = new THREE.Object3D;
   root.add(group);
   loadStore();
-  loadJacketModel();
+  //loadJacketModel();
+  changeJacketMaterial('models/clothes/BlackLeatherJacket/Main Texture/[Albedo].jpg')
 
   // Now add the group to our scene
   scene.add(root);
