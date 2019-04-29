@@ -18,4 +18,16 @@ body {
 	border:none;
 	background-color:#ffffff;
 }
-
+.textureImage{
+	border:1px solid black;
+	border-radius: 100px;
+	width: 100px;
+	height: 100px;
+	cursor: pointer;
+}
+#textureContainer
+{
+	position:absolute;
+	right:20px;
+	bottom:20px;
+}
