@@ -205,6 +205,44 @@ function loadMannequin()
     });
     
 }
+function loadMannequin2()
+{
+  var textureMannequin = new THREE.TextureLoader().load("models/mannequin/texture.tif");
+  lambertMannequin = new THREE.MeshBasicMaterial({color: 0xffffff, map: textureMannequin});
+  if(!objLoader)
+    objLoader = new THREE.OBJLoader();
+
+    objLoader.load(
+      'models/mannequin/basicman.obj',
+
+      function(object)
+      {    
+          object.traverse( function ( child ) 
+          {
+              if ( child instanceof THREE.Mesh ) 
+              {
+                  child.castShadow = true;
+                  child.receiveShadow = true;
+                  child.material = lambertMannequin;
+              }
+          } );            
+          player = object;
+          player.scale.set(4,4.47,4);
+          player.bbox = new THREE.Box3()
+          player.bbox.setFromObject(player)
+          player.position.z = 0;
+          player.position.x = -1.065;
+          player.position.y = 0;
+          player.rotation.y = Math.PI /2;
+          textureOn=true;
+          group.add(player);
+      },
+      function ( error ) {
+
+          console.log( 'An error happened' );
+    });
+    
+}
 function changeJacketMaterial(textureUri)
 {
   texture = new THREE.TextureLoader().load(textureUri);
@@ -223,8 +261,8 @@ function changeJacketMaterial(textureUri)
       player.bbox = new THREE.Box3()
       player.bbox.setFromObject(player)
       player.position.z = 0;
-      player.position.x = 0;
-      player.position.y = -60;
+      player.position.x = 2;
+      player.position.y = -51;
       player.scale.set(0.5,0.5,0.5);
       player.rotation.y = Math.PI /2;
       group.add(player);
@@ -260,7 +298,7 @@ function createScene(canvas)
   });
 
   // Set the viewport size
-  renderer.setSize(window.innerWidth -20, window.innerHeight -20);
+  renderer.setSize(window.innerWidth, window.innerHeight);
 
   // Create a new Three.js scene
   scene = new THREE.Scene();
@@ -271,6 +309,10 @@ function createScene(canvas)
   scene.add(camera);
 
   orbitControls = new THREE.OrbitControls(camera, renderer.domElement);
+  orbitControls.minDistance = 100;
+  orbitControls.maxDistance = 160;
+  orbitControls.minPolarAngle = 0;
+  orbitControls.maxPolarAngle = Math.PI/1.8;
 
   // Create a group to hold all the objects
   root = new THREE.Object3D;
@@ -289,7 +331,7 @@ function createScene(canvas)
   group = new THREE.Object3D;
   root.add(group);
   loadStore();
-  loadMannequin();
+  loadMannequin2();
   //loadJacketModel();
   changeJacketMaterial('models/clothes/BlackLeatherJacket/Main Texture/[Albedo].jpg')
 
