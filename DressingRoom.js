@@ -154,13 +154,47 @@ function loadJacketModel()
               }
           } );            
           player = object;
-          player.scale.set(0.1,0.1,0.1);
+          player.scale.set(0.5,0.455,0.5);
           player.bbox = new THREE.Box3()
           player.bbox.setFromObject(player)
           player.position.z = 0;
           player.position.x = 0;
           player.position.y = -60;
-          player.scale.set(0.5,0.5,0.5);
+          player.rotation.y = Math.PI /2;
+          textureOn=true;
+          group.add(player);
+      },
+      function ( error ) {
+
+          console.log( 'An error happened' );
+    });
+    
+}
+function loadMannequin()
+{
+  if(!objLoader)
+    objLoader = new THREE.OBJLoader();
+
+    objLoader.load(
+      'models/mannequin/FinalBaseMesh.obj',
+
+      function(object)
+      {    
+          object.traverse( function ( child ) 
+          {
+              if ( child instanceof THREE.Mesh ) 
+              {
+                  child.castShadow = true;
+                  child.receiveShadow = true;
+              }
+          } );            
+          player = object;
+          player.scale.set(3,3.47,3);
+          player.bbox = new THREE.Box3()
+          player.bbox.setFromObject(player)
+          player.position.z = 0;
+          player.position.x = -1.065;
+          player.position.y = -45;
           player.rotation.y = Math.PI /2;
           textureOn=true;
           group.add(player);
@@ -255,6 +289,7 @@ function createScene(canvas)
   group = new THREE.Object3D;
   root.add(group);
   loadStore();
+  loadMannequin();
   //loadJacketModel();
   changeJacketMaterial('models/clothes/BlackLeatherJacket/Main Texture/[Albedo].jpg')
 
