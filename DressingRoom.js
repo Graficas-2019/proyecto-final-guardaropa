@@ -11,6 +11,7 @@ var directionalLight = null;
 var spotLight = null;
 var pointLight = null;
 var ambientLight = null;
+var textureOn = null;
 
 var mapUrl = "./images/Environment/floor.jpg";
 var objLoader = null;
@@ -161,6 +162,7 @@ function loadJacketModel()
           player.position.y = -60;
           player.scale.set(0.5,0.5,0.5);
           player.rotation.y = Math.PI /2;
+          textureOn=true;
           group.add(player);
       },
       function ( error ) {
