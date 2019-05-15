@@ -21,7 +21,6 @@ var duration = 20000; // ms
 var currentTime = Date.now();
 
 function animate() {
-
   var now = Date.now();
   var deltat = now - currentTime;
   currentTime = now;
@@ -55,15 +54,15 @@ function run() {
       'models/store/stonetee.obj',
 
       function(object)
-      {    
-          object.traverse( function ( child ) 
+      {
+          object.traverse( function ( child )
           {
-              if ( child instanceof THREE.Mesh ) 
+              if ( child instanceof THREE.Mesh )
               {
                   child.castShadow = true;
                   child.receiveShadow = true;
               }
-          } );            
+          } );
           player = object;
           player.scale.set(3,3,3);
           player.bbox = new THREE.Box3()
@@ -86,187 +85,176 @@ function run() {
               scene.add(controls.getObject());
               bool = false;
           }
-
       },
       function ( error ) {
 
           console.log( 'An error happened' );
     });
-    
 }*/
 
-function loadStore()
-{  
-  if(!mtlLoader)
-  {
+function loadStore() {
+  if (!mtlLoader) {
     mtlLoader = new THREE.MTLLoader();
-    mtlLoader.load( 'models/store/store.mtl', function( materials ) 
-    {  
+    mtlLoader.load('models/store/store.mtl', function(materials) {
       materials.preload();
       objLoader = new THREE.OBJLoader();
-      objLoader.setMaterials( materials );
+      objLoader.setMaterials(materials);
       objLoader.load(
         'models/store/store.obj',
-  
-        function(object)
-        {    
-            object.traverse( function ( child ) 
-            {
-                if ( child instanceof THREE.Mesh ) 
-                {
-                    child.castShadow = true;
-                    child.receiveShadow = true;
-                }
-            } );            
-            player = object;
-            player.scale.set(3,3,3);
-            player.bbox = new THREE.Box3()
-            player.bbox.setFromObject(player)
-            player.position.z = 0;
-            player.position.x = 200;
-            player.position.y = -50;
-            player.rotation.y = Math.PI /2;
-            group.add(player);
+
+        function(object) {
+          object.traverse(function(child) {
+            if (child instanceof THREE.Mesh) {
+              child.castShadow = true;
+              child.receiveShadow = true;
+            }
+          });
+          player = object;
+          player.scale.set(3, 3, 3);
+          player.bbox = new THREE.Box3()
+          player.bbox.setFromObject(player)
+          player.position.z = 0;
+          player.position.x = 200;
+          player.position.y = -50;
+          player.rotation.y = Math.PI / 2;
+          group.add(player);
         },
-        function ( error ) {
-  
-            console.log( 'An error happened' );
-      });
+        function(error) {
+
+          console.log('An error happened');
+        });
     })
   }
 }
-function loadJacketModel()
-{
-  if(!objLoader)
+
+function loadJacketModel() {
+  if (!objLoader)
     objLoader = new THREE.OBJLoader();
 
-    objLoader.load(
-      'models/clothes/BlackLeatherJacket/Black Leather Jacket.obj',
-
-      function(object)
-      {    
-          object.traverse( function ( child ) 
-          {
-              if ( child instanceof THREE.Mesh ) 
-              {
-                  child.castShadow = true;
-                  child.receiveShadow = true;
-              }
-          } );            
-          player = object;
-          player.scale.set(0.5,0.455,0.5);
-          player.bbox = new THREE.Box3()
-          player.bbox.setFromObject(player)
-          player.position.z = 0;
-          player.position.x = 0;
-          player.position.y = -60;
-          player.rotation.y = Math.PI /2;
-          textureOn=true;
-          group.add(player);
-      },
-      function ( error ) {
-
-          console.log( 'An error happened' );
-    });
-    
-}
-function loadMannequin()
-{
-  if(!objLoader)
-    objLoader = new THREE.OBJLoader();
-
-    objLoader.load(
-      'models/mannequin/FinalBaseMesh.obj',
-
-      function(object)
-      {    
-          object.traverse( function ( child ) 
-          {
-              if ( child instanceof THREE.Mesh ) 
-              {
-                  child.castShadow = true;
-                  child.receiveShadow = true;
-              }
-          } );            
-          player = object;
-          player.scale.set(3,3.47,3);
-          player.bbox = new THREE.Box3()
-          player.bbox.setFromObject(player)
-          player.position.z = 0;
-          player.position.x = -1.065;
-          player.position.y = -45;
-          player.rotation.y = Math.PI /2;
-          textureOn=true;
-          group.add(player);
-      },
-      function ( error ) {
-
-          console.log( 'An error happened' );
-    });
-    
-}
-function loadMannequin2()
-{
-  var textureMannequin = new THREE.TextureLoader().load("models/mannequin/texture.tif");
-  lambertMannequin = new THREE.MeshBasicMaterial({color: 0xffffff, map: textureMannequin});
-  if(!objLoader)
-    objLoader = new THREE.OBJLoader();
-
-    objLoader.load(
-      'models/mannequin/basicman.obj',
-
-      function(object)
-      {    
-          object.traverse( function ( child ) 
-          {
-              if ( child instanceof THREE.Mesh ) 
-              {
-                  child.castShadow = true;
-                  child.receiveShadow = true;
-                  child.material = lambertMannequin;
-              }
-          } );            
-          player = object;
-          player.scale.set(4,4.47,4);
-          player.bbox = new THREE.Box3()
-          player.bbox.setFromObject(player)
-          player.position.z = 0;
-          player.position.x = -1.065;
-          player.position.y = 0;
-          player.rotation.y = Math.PI /2;
-          textureOn=true;
-          group.add(player);
-      },
-      function ( error ) {
-
-          console.log( 'An error happened' );
-    });
-    
-}
-function changeJacketMaterial(textureUri)
-{
-  texture = new THREE.TextureLoader().load(textureUri);
-  lambert = new THREE.MeshPhongMaterial({color: 0xffffff, map: texture});
-  objLoader = new THREE.OBJLoader();
   objLoader.load(
-    'models/clothes/BlackLeatherJacket/Black Leather Jacket.obj', 
-    function ( object ) {
+    'models/clothes/BlackLeatherJacket/Black Leather Jacket.obj',
+
+    function(object) {
       object.traverse(function(child) {
-          if (child instanceof THREE.Mesh){
-              child.material = lambert;
-          }
+        if (child instanceof THREE.Mesh) {
+          child.castShadow = true;
+          child.receiveShadow = true;
+        }
       });
       player = object;
-      player.scale.set(0.1,0.1,0.1);
+      player.scale.set(0.5, 0.455, 0.5);
+      player.bbox = new THREE.Box3()
+      player.bbox.setFromObject(player)
+      player.position.z = 0;
+      player.position.x = 0;
+      player.position.y = -60;
+      player.rotation.y = Math.PI / 2;
+      textureOn = true;
+      group.add(player);
+    },
+    function(error) {
+
+      console.log('An error happened');
+    });
+
+}
+
+function loadMannequin() {
+  if (!objLoader)
+    objLoader = new THREE.OBJLoader();
+
+  objLoader.load(
+    'models/mannequin/FinalBaseMesh.obj',
+
+    function(object) {
+      object.traverse(function(child) {
+        if (child instanceof THREE.Mesh) {
+          child.castShadow = true;
+          child.receiveShadow = true;
+        }
+      });
+      player = object;
+      player.scale.set(3, 3.47, 3);
+      player.bbox = new THREE.Box3()
+      player.bbox.setFromObject(player)
+      player.position.z = 0;
+      player.position.x = -1.065;
+      player.position.y = -45;
+      player.rotation.y = Math.PI / 2;
+      textureOn = true;
+      group.add(player);
+    },
+    function(error) {
+
+      console.log('An error happened');
+    });
+
+}
+
+function loadMannequin2() {
+  var textureMannequin = new THREE.TextureLoader().load("models/mannequin/texture.tif");
+  lambertMannequin = new THREE.MeshBasicMaterial({
+    color: 0xffffff,
+    map: textureMannequin
+  });
+  if (!objLoader)
+    objLoader = new THREE.OBJLoader();
+
+  objLoader.load(
+    'models/mannequin/basicman.obj',
+
+    function(object) {
+      object.traverse(function(child) {
+        if (child instanceof THREE.Mesh) {
+          child.castShadow = true;
+          child.receiveShadow = true;
+          child.material = lambertMannequin;
+        }
+      });
+      player = object;
+      player.scale.set(4, 4.47, 4);
+      player.bbox = new THREE.Box3()
+      player.bbox.setFromObject(player)
+      player.position.z = 0;
+      player.position.x = -1.065;
+      player.position.y = 0;
+      player.rotation.y = Math.PI / 2;
+      textureOn = true;
+      group.add(player);
+    },
+    function(error) {
+
+      console.log('An error happened');
+    });
+
+}
+
+function changeJacketMaterial(textureUri) {
+  texture = new THREE.TextureLoader().load(textureUri);
+  lambert = new THREE.MeshPhongMaterial({
+    color: 0xffffff,
+    map: texture
+  });
+  objLoader = new THREE.OBJLoader();
+  objLoader.load(
+    'models/clothes/BlackLeatherJacket/Black Leather Jacket.obj',
+    function(object) {
+      object.traverse(function(child) {
+        if (child instanceof THREE.Mesh) {
+          child.material = lambert;
+        }
+      });
+      player = object;
+      player.scale.set(0.1, 0.1, 0.1);
       player.bbox = new THREE.Box3()
       player.bbox.setFromObject(player)
       player.position.z = 0;
       player.position.x = 2;
       player.position.y = -51;
-      player.scale.set(0.5,0.5,0.5);
-      player.rotation.y = Math.PI /2;
+      player.scale.set(0.5, 0.5, 0.5);
+      player.rotation.y = Math.PI / 2;
       group.add(player);
-  }//, onProgress, onError 
+    } //, onProgress, onError
   );
 }
 
@@ -279,8 +267,7 @@ function setLightColor(light, r, g, b) {
 
 function toggleLight(light) {}
 
-function toggleTexture() 
-{
+function toggleTexture() {
   textureOn = !textureOn;
   var names = materialName.split("-");
   if (!textureOn) {
@@ -290,8 +277,7 @@ function toggleTexture()
   }
 }
 
-function createScene(canvas) 
-{
+function createScene(canvas) {
   renderer = new THREE.WebGLRenderer({
     canvas: canvas,
     antialias: true
@@ -312,7 +298,7 @@ function createScene(canvas)
   orbitControls.minDistance = 100;
   orbitControls.maxDistance = 160;
   orbitControls.minPolarAngle = 0;
-  orbitControls.maxPolarAngle = Math.PI/1.8;
+  orbitControls.maxPolarAngle = Math.PI / 1.8;
 
   // Create a group to hold all the objects
   root = new THREE.Object3D;
