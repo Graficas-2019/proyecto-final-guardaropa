@@ -25,7 +25,8 @@ var mapUrl = "./images/Environment/floor.jpg";
 var objLoader = null;
 var mtlLoader = null;
 
-var mouse = new THREE.Vector2(), INTERSECTED, CLICKED;
+var mouse = new THREE.Vector2(),
+  INTERSECTED, CLICKED;
 var raycaster;
 
 var canvas;
@@ -61,26 +62,25 @@ function run() {
 function onDocumentMouseDown(event) {
   event.preventDefault();
   event.preventDefault();
-  mouse.x = ( event.clientX / canvas.width ) * 2 - 1;
-  mouse.y = - ( event.clientY / canvas.height ) * 2 + 1;
+  mouse.x = (event.clientX / canvas.width) * 2 - 1;
+  mouse.y = -(event.clientY / canvas.height) * 2 + 1;
 
   raycaster.setFromCamera(mouse, camera);
   var intersects = raycaster.intersectObjects(scene.children, true);
   if (intersects.length > 0) {
-      CLICKED = intersects[0].object.parent;
-      console.log("Clicked!")
-      if(CLICKED.name.includes("Jacket")) {
-        $("#selectorMsg").html("Jacket Selected");
-        isJacketSelected = true;
-        console.log("jacket")
-      }
-      else if(CLICKED.name.includes("Pants")) {
-        $("#selectorMsg").html("Pants Selected");
-        isJacketSelected = false;
-        console.log("pants")
-      }
-      
-  } 
+    CLICKED = intersects[0].object.parent;
+    console.log("Clicked!")
+    if (CLICKED.name.includes("Jacket")) {
+      $("#selectorMsg").html("Jacket Selected");
+      isJacketSelected = true;
+      console.log("jacket")
+    } else if (CLICKED.name.includes("Pants")) {
+      $("#selectorMsg").html("Pants Selected");
+      isJacketSelected = false;
+      console.log("pants")
+    }
+
+  }
 }
 
 function loadStore() {
@@ -111,7 +111,6 @@ function loadStore() {
           group.add(store);
         },
         function(error) {
-
           console.log('An error happened');
         });
     })
@@ -210,17 +209,16 @@ function changePantsMaterial(textureUri) {
       pants.scale.set(0.4, 0.4, 0.5);
       pants.rotation.x = Math.PI / 2;
       pants.rotation.y = Math.PI
-      pants.rotation.z = 3*Math.PI/2;
+      pants.rotation.z = 3 * Math.PI / 2;
       group.add(pants);
     }
   );
 }
+
 function changeSelectedMaterial(textureUri) {
-  if(isJacketSelected)
-  {
+  if (isJacketSelected) {
     changeJacketMaterial(textureUri)
-  }
-  else{
+  } else {
     changePantsMaterial(textureUri)
   }
 }
