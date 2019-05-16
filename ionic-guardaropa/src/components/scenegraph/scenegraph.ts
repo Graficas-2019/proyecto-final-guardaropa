@@ -13,66 +13,31 @@ export class SceneGraph {
   scene: THREE.Scene;
   camera: THREE.Camera;
   root: THREE.Object3D;
-  group: any = null;
-  sphere: any = null;
-  sphereEnvMapped: any = null;
+  group: THREE.Object3D = new THREE.Object3D;
   orbitControls: any = null;
 
   // Second block of variables
-  directionalLight: any = new THREE.DirectionalLight(0xffffff, 1);
-  ambientLight: any = new THREE.AmbientLight(0x888888);
-  textureOn: boolean = null;
+  directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+  ambientLight = new THREE.AmbientLight(0x888888);
+  textureOn: boolean;
 
   // Third block of variables
-  objLoader: any = null;
-  mtlLoader: any = null;
+  objLoader = new OBJLoader();
+  mtlLoader = new MTLLoader();
 
   // Fourth block of variables
   duration: number = 20000; // ms
   currentTime: any = Date.now();
 
-  // New definitions
-  player: any;
-  lambertMannequin: any;
-  texture: any;
-  lambert: any;
-  materialName: any;
-
-  mesh: THREE.Mesh;
-  animating: boolean;
-
   constructor(private sceneGraphElement: ElementRef) {
   }
 
-  // ngAfterViewInit() {
-  //   // Create a new scene to display all the app
-  //   this.scene = new THREE.Scene();
-  //
-  //   // Add  a camera so we can view the scene
-  //   this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 10000);
-  //   this.camera.position.set(100, 50, 100);
-  //
-  //   let geometry = new THREE.BoxGeometry(100, 100, 100);
-  //   let material = new THREE.MeshBasicMaterial({ color: 0xff0000, wireframe: true });
-  //   this.mesh = new THREE.Mesh(geometry, material);
-  //   this.scene.add(this.mesh);
-  //
-  //   this.renderer = new THREE.WebGLRenderer();
-  //   this.sceneGraphElement.nativeElement.childNodes[0].appendChild(this.renderer.domElement);
-  // }
-
   ngAfterViewInit() {
-    this.renderer = new THREE.WebGLRenderer();
-    this.sceneGraphElement.nativeElement.childNodes[0].appendChild(this.renderer.domElement);
-
-    // Set the viewport size
-    this.renderer.setSize(window.innerWidth, window.innerHeight);
-
     // Create a new Three.js scene
     this.scene = new THREE.Scene();
 
     // Add  a camera so we can view the scene
-    this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 10000);
+    this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 4000);
     this.camera.position.set(100, 50, 100);
     this.scene.add(this.camera);
 
@@ -105,26 +70,10 @@ export class SceneGraph {
 
     // Now add the group to our scene
     this.scene.add(this.root);
+
+    this.renderer = new THREE.WebGLRenderer();
+    this.sceneGraphElement.nativeElement.childNodes[0].appendChild(this.renderer.domElement);
   }
-
-  // startAnimation() {
-  //   let width = this.sceneGraphElement.nativeElement.childNodes[0].clientWidth;
-  //   let height = this.sceneGraphElement.nativeElement.childNodes[0].clientHeight;
-  //   this.renderer.setSize(width, height);
-  //   this.animating = true;
-  //   this.render();
-  // }
-
-  // stopAnimation() {
-  //   this.animating = false;
-  // }
-
-  // render() {
-  //   this.mesh.rotation.x += 0.05;
-  //   this.mesh.rotation.y += 0.05;
-  //   this.renderer.render(this.scene, this.camera);
-  //   if (this.animating) { requestAnimationFrame(() => { this.render() }); };
-  // }
 
   // ANIMATE() function from the .js
   animate() {
@@ -158,7 +107,7 @@ export class SceneGraph {
       this.mtlLoader = new MTLLoader();
       this.mtlLoader.load('models/store/store.mtl', function(materials) {
         materials.preload();
-        this.objLoader = new THREE.OBJLoader();
+        this.objLoader = new OBJLoader();
         this.objLoader.setMaterials(materials);
         this.objLoader.load(
           'models/store/store.obj',
@@ -170,86 +119,151 @@ export class SceneGraph {
                 child.receiveShadow = true;
               }
             });
-            this.player = object;
-            this.player.scale.set(3, 3, 3);
-            this.player.bbox = new THREE.Box3()
-            this.player.bbox.setFromObject(this.player)
-            this.player.position.z = 0;
-            this.player.position.x = 200;
-            this.player.position.y = -50;
-            this.player.rotation.y = Math.PI / 2;
-            this.group.add(this.player);
+            var player = object;
+            player.scale.set(3, 3, 3);
+            player.bbox = new THREE.Box3()
+            player.bbox.setFromObject(player)
+            player.position.z = 0;
+            player.position.x = 200;
+            player.position.y = -50;
+            player.rotation.y = Math.PI / 2;
+            this.group.add(player);
           },
           function(error) {
-            console.log('An error happened');
+            console.log('Error en el load de la store');
           });
       })
     }
   }
 
-  loadMannequin2() {
-    var textureMannequin = new THREE.TextureLoader().load("models/mannequin/texture.tif");
-    this.lambertMannequin = new THREE.MeshBasicMaterial({
-      color: 0xffffff,
-      map: textureMannequin
-    });
+  loadJacketModel() {
     if (!this.objLoader)
-      this.objLoader = new THREE.OBJLoader();
+      this.objLoader = new OBJLoader();
 
     this.objLoader.load(
-      './models/mannequin/basicman.obj',
+      'models/clothes/BlackLeatherJacket/Black Leather Jacket.obj',
 
       function(object) {
         object.traverse(function(child) {
           if (child instanceof THREE.Mesh) {
             child.castShadow = true;
             child.receiveShadow = true;
-            child.material = this.lambertMannequin;
           }
         });
-        this.player = object;
-        this.player.scale.set(4, 4.47, 4);
-        this.player.bbox = new THREE.Box3()
-        this.player.bbox.setFromObject(this.player)
-        this.player.position.z = 0;
-        this.player.position.x = -1.065;
-        this.player.position.y = 0;
-        this.player.rotation.y = Math.PI / 2;
+        var player = object;
+        player.scale.set(0.5, 0.455, 0.5);
+        player.bbox = new THREE.Box3()
+        player.bbox.setFromObject(player)
+        player.position.z = 0;
+        player.position.x = 0;
+        player.position.y = -60;
+        player.rotation.y = Math.PI / 2;
         this.textureOn = true;
-        this.group.add(this.player);
+        this.group.add(player);
       },
       function(error) {
         console.log('An error happened');
       });
+
+  }
+
+  loadMannequin() {
+    if (!this.objLoader)
+      this.objLoader = new OBJLoader();
+
+    this.objLoader.load(
+      'models/mannequin/FinalBaseMesh.obj',
+
+      function(object) {
+        object.traverse(function(child) {
+          if (child instanceof THREE.Mesh) {
+            child.castShadow = true;
+            child.receiveShadow = true;
+          }
+        });
+        var player = object;
+        player.scale.set(3, 3.47, 3);
+        player.bbox = new THREE.Box3()
+        player.bbox.setFromObject(player)
+        player.position.z = 0;
+        player.position.x = -1.065;
+        player.position.y = -45;
+        player.rotation.y = Math.PI / 2;
+        this.textureOn = true;
+        this.group.add(player);
+      },
+      function(error) {
+        console.log('An error happened');
+      });
+
+  }
+
+  loadMannequin2() {
+    var textureMannequin = new THREE.TextureLoader().load("models/mannequin/texture.tif");
+    var lambertMannequin = new THREE.MeshBasicMaterial({
+      color: 0xffffff,
+      map: textureMannequin
+    });
+    if (!this.objLoader)
+      this.objLoader = new OBJLoader();
+    var playerOut, texture;
+    this.objLoader.load(
+      'models/mannequin/basicman.obj',
+
+      function(object) {
+        object.traverse(function(child) {
+          if (child instanceof THREE.Mesh) {
+            child.castShadow = true;
+            child.receiveShadow = true;
+            child.material = lambertMannequin;
+          }
+        });
+        var player = object;
+        player.scale.set(4, 4.47, 4);
+        player.bbox = new THREE.Box3();
+        player.bbox.setFromObject(player);
+        player.position.z = 0;
+        player.position.x = -1.065;
+        player.position.y = 0;
+        player.rotation.y = Math.PI / 2;
+        texture = true;
+        playerOut = player;
+      },
+      function(error) {
+        console.log('An error happened');
+      });
+    this.textureOn = texture;
+    this.group.add(playerOut);
   }
 
   changeJacketMaterial(textureUri) {
-    this.texture = new THREE.TextureLoader().load(textureUri);
-    this.lambert = new THREE.MeshPhongMaterial({
+    var texture = new THREE.TextureLoader().load(textureUri);
+    var lambert = new THREE.MeshPhongMaterial({
       color: 0xffffff,
-      map: this.texture
+      map: texture
     });
-    this.objLoader = new THREE.OBJLoader();
+    this.objLoader = new OBJLoader();
+    var playerOut;
     this.objLoader.load(
       'models/clothes/BlackLeatherJacket/Black Leather Jacket.obj',
       function(object) {
         object.traverse(function(child) {
           if (child instanceof THREE.Mesh) {
-            child.material = this.lambert;
+            child.material = lambert;
           }
         });
-        this.player = object;
-        this.player.scale.set(0.1, 0.1, 0.1);
-        this.player.bbox = new THREE.Box3()
-        this.player.bbox.setFromObject(this.player)
-        this.player.position.z = 0;
-        this.player.position.x = 2;
-        this.player.position.y = -51;
-        this.player.scale.set(0.5, 0.5, 0.5);
-        this.player.rotation.y = Math.PI / 2;
-        this.group.add(this.player);
-      } //, onProgress, onError
-    );
+        var player = object;
+        player.scale.set(0.1, 0.1, 0.1);
+        player.bbox = new THREE.Box3();
+        player.bbox.setFromObject(player);
+        player.position.z = 0;
+        player.position.x = 2;
+        player.position.y = -51;
+        player.scale.set(0.5, 0.5, 0.5);
+        player.rotation.y = Math.PI / 2;
+        playerOut = player;
+      });
+    this.group.add(playerOut);
   }
 
   setLightColor(light, r, g, b) {
@@ -259,15 +273,7 @@ export class SceneGraph {
     light.color.setRGB(r, g, b);
   }
 
-  // toggleTexture() {
-  //   this.textureOn = !this.textureOn;
-  //   var names = this.materialName.split("-");
-  //   if (!this.textureOn) {
-  //     this.setMaterial(names[0]);
-  //   } else {
-  //     this.setMaterial(names[0] + "-textured");
-  //   }
-  // }
+  toggleLight(light) { }
 
   createScene(canvas) {
     this.renderer = new THREE.WebGLRenderer({
@@ -311,7 +317,7 @@ export class SceneGraph {
     this.loadStore();
     this.loadMannequin2();
     //loadJacketModel();
-    this.changeJacketMaterial('models/clothes/BlackLeatherJacket/Main Texture/[Albedo].jpg')
+    this.changeJacketMaterial('models/[Albedo].jpg')
 
     // Now add the group to our scene
     this.scene.add(this.root);
