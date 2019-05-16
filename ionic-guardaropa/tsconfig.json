@@ -1,5 +1,7 @@
 {
   "compilerOptions": {
+      "paths": { "*": ["types/*"] },
+      "baseUrl": ".",
     "allowSyntheticDefaultImports": true,
     "declaration": false,
     "emitDecoratorMetadata": true,
