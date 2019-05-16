@@ -17,11 +17,11 @@ export class GuardaropaPage {
   }
 
   ionViewDidEnter() {
-    this.sceneGraph.startAnimation();
+    // this.sceneGraph.startAnimation();
   }
 
   ionViewDidLeave() {
-    this.sceneGraph.stopAnimation();
+    // this.sceneGraph.stopAnimation();
   }
 
 }
