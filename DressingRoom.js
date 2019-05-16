@@ -83,53 +83,6 @@ function onDocumentMouseDown(event) {
   } 
 }
 
-/*function loadStore()
-{
-  if(!objLoader)
-    objLoader = new THREE.OBJLoader();
-
-    objLoader.load(
-      'models/store/stonetee.obj',
-
-      function(object)
-      {
-          object.traverse( function ( child )
-          {
-              if ( child instanceof THREE.Mesh )
-              {
-                  child.castShadow = true;
-                  child.receiveShadow = true;
-              }
-          } );
-          player = object;
-          player.scale.set(3,3,3);
-          player.bbox = new THREE.Box3()
-          player.bbox.setFromObject(player)
-          player.position.z = 0;
-          player.position.x = 200;
-          player.position.y = -50;
-          player.rotation.y = Math.PI /2;
-          group.add(player);
-      },
-      function ( xhr ) {
-
-          console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
-
-          player_loaded = ( xhr.loaded / xhr.total * 100 )
-
-          if (player_loaded >= 100 && bool){
-              console.log("controls")
-              controls = new THREE.PointerLockControls(group);
-              scene.add(controls.getObject());
-              bool = false;
-          }
-      },
-      function ( error ) {
-
-          console.log( 'An error happened' );
-    });
-}*/
-
 function loadStore() {
   if (!mtlLoader) {
     mtlLoader = new THREE.MTLLoader();
@@ -164,41 +117,6 @@ function loadStore() {
     })
   }
 }
-
-function loadJacketModel() {
-  if (!objLoader)
-    objLoader = new THREE.OBJLoader();
-
-  objLoader.load(
-    'models/clothes/BlackLeatherJacket/Black Leather Jacket.obj',
-
-    function(object) {
-      object.traverse(function(child) {
-        if (child instanceof THREE.Mesh) {
-          child.castShadow = true;
-          child.receiveShadow = true;
-        }
-      });
-      jacket = object;
-      jacket.name = "Jacket"
-      jacket.scale.set(0.5, 0.455, 0.5);
-      jacket.bbox = new THREE.Box3()
-      jacket.bbox.setFromObject(jacket)
-      jacket.position.z = 0;
-      jacket.position.x = 0;
-      jacket.position.y = -60;
-      jacket.rotation.y = Math.PI / 2;
-      textureOn = true;
-      group.add(jacket);
-    },
-    function(error) {
-
-      console.log('An error happened');
-    });
-
-}
-
-
 
 function loadMannequin2() {
   var textureMannequin = new THREE.TextureLoader().load("models/mannequin/texture.tif");
@@ -266,6 +184,7 @@ function changeJacketMaterial(textureUri) {
     } //, onProgress, onError
   );
 }
+
 function changePantsMaterial(textureUri) {
   pantsTexture = new THREE.TextureLoader().load(textureUri);
   var pantslambert = new THREE.MeshPhongMaterial({
@@ -293,7 +212,7 @@ function changePantsMaterial(textureUri) {
       pants.rotation.y = Math.PI
       pants.rotation.z = 3*Math.PI/2;
       group.add(pants);
-    } //, onProgress, onError
+    }
   );
 }
 function changeSelectedMaterial(textureUri) {
@@ -305,17 +224,6 @@ function changeSelectedMaterial(textureUri) {
     changePantsMaterial(textureUri)
   }
 }
-
-
-function setLightColor(light, r, g, b) {
-  r /= 255;
-  g /= 255;
-  b /= 255;
-  light.color.setRGB(r, g, b);
-}
-
-function toggleLight(light) {}
-
 
 function createScene(_canvas) {
   canvas = _canvas
