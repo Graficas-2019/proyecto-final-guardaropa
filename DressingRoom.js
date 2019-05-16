@@ -267,16 +267,6 @@ function setLightColor(light, r, g, b) {
 
 function toggleLight(light) {}
 
-function toggleTexture() {
-  textureOn = !textureOn;
-  var names = materialName.split("-");
-  if (!textureOn) {
-    setMaterial(names[0]);
-  } else {
-    setMaterial(names[0] + "-textured");
-  }
-}
-
 function createScene(canvas) {
   renderer = new THREE.WebGLRenderer({
     canvas: canvas,
