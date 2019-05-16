@@ -26,6 +26,12 @@ body {
 	cursor: pointer;
 	transition: all .1s ease-in-out;
 }
+#selectedClotheContainer
+{
+	position:absolute;
+	right:20px;
+	bottom:40px;
+}
 #textureContainer
 {
 	position:absolute;
@@ -44,7 +50,7 @@ body {
 	width: 100%;
 	background-color: #5f0f0fc7;
 	text-align: -webkit-center;
-	height: 75px;
+	height: 100px;
 }
 #title h1{
 	font-size: 30px;
