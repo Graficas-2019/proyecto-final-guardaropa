@@ -21,7 +21,7 @@ export class GuardaropaPage {
   }
 
   ionViewDidLeave() {
-    // this.sceneGraph.stopAnimation();
+    this.sceneGraph.stopAnimation();
   }
 
 }

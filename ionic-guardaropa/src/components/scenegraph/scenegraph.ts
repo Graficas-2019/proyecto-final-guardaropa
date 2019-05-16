@@ -1,4 +1,4 @@
-import { Component, Input, ElementRef } from '@angular/core';
+import { Component, ElementRef } from '@angular/core';
 import * as THREE from 'three';
 import { MTLLoader, OBJLoader } from 'three-obj-mtl-loader';
 
@@ -25,9 +25,14 @@ export class SceneGraph {
   objLoader = new OBJLoader();
   mtlLoader = new MTLLoader();
 
+  playerOut: any = null;
+  playerOut2: any = null;
+
   // Fourth block of variables
   duration: number = 20000; // ms
   currentTime: any = Date.now();
+
+  animation: boolean = null;
 
   constructor(private sceneGraphElement: ElementRef) {
   }
@@ -65,6 +70,7 @@ export class SceneGraph {
     this.root.add(this.group);
     this.loadStore();
     this.loadMannequin2();
+    // setTimeout(function() { this.addAllToGroup(); }, 1000);
     //loadJacketModel();
     this.changeJacketMaterial('models/clothes/BlackLeatherJacket/Main Texture/[Albedo].jpg')
 
@@ -84,22 +90,24 @@ export class SceneGraph {
     var angle = Math.PI * 2 * fract;
     // Rotate the sphere group about its Y axis
     this.group.rotation.y += angle;
+
+    let width = this.sceneGraphElement.nativeElement.childNodes[0].clientWidth;
+    let height = this.sceneGraphElement.nativeElement.childNodes[0].clientHeight;
+    this.renderer.setSize(width, height);
+    this.animation = true;
+    this.render();
+  }
+
+  stopAnimation() {
+    this.animation = false;
   }
 
   // RUN() function from the .js
-  run() {
-    requestAnimationFrame(function() {
-      this.run();
-    });
-
+  render() {
     // Render the scene
     this.renderer.render(this.scene, this.camera);
 
-    // Spin the cube for next frame
-    this.animate();
-
-    // Update the camera controller
-    // orbitControls.update();
+    if (this.animation) { requestAnimationFrame(() => { this.render() }); };
   }
 
   loadStore() {
@@ -206,7 +214,7 @@ export class SceneGraph {
     });
     if (!this.objLoader)
       this.objLoader = new OBJLoader();
-    var playerOut, texture;
+    var playerOutIn, texture;
     this.objLoader.load(
       'models/mannequin/basicman.obj',
 
@@ -227,13 +235,16 @@ export class SceneGraph {
         player.position.y = 0;
         player.rotation.y = Math.PI / 2;
         texture = true;
-        playerOut = player;
+        playerOutIn = player;
       },
       function(error) {
         console.log('An error happened');
       });
+    this.objLoader.OnLoadComplete = function() {
+      this.group.add(playerOutIn);
+    }
     this.textureOn = texture;
-    this.group.add(playerOut);
+    this.playerOut = playerOutIn;
   }
 
   changeJacketMaterial(textureUri) {
@@ -243,7 +254,7 @@ export class SceneGraph {
       map: texture
     });
     this.objLoader = new OBJLoader();
-    var playerOut;
+    var playerOutIn;
     this.objLoader.load(
       'models/clothes/BlackLeatherJacket/Black Leather Jacket.obj',
       function(object) {
@@ -261,9 +272,18 @@ export class SceneGraph {
         player.position.y = -51;
         player.scale.set(0.5, 0.5, 0.5);
         player.rotation.y = Math.PI / 2;
-        playerOut = player;
+        playerOutIn = player;
       });
-    this.group.add(playerOut);
+    this.objLoader.OnLoadComplete = function() {
+      this.group.add(playerOutIn);
+    }
+    this.playerOut2 = playerOutIn;
+    // this.group.add(playerOut);
+  }
+
+  addAllToGroup() {
+    this.group.add(this.playerOut);
+    this.group.add(this.playerOut2);
   }
 
   setLightColor(light, r, g, b) {
@@ -313,11 +333,10 @@ export class SceneGraph {
 
     // Create a group to hold the spheres
     this.group = new THREE.Object3D;
+    this.addAllToGroup();
     this.root.add(this.group);
-    this.loadStore();
-    this.loadMannequin2();
     //loadJacketModel();
-    this.changeJacketMaterial('models/[Albedo].jpg')
+    this.changeJacketMaterial('models/clothes/BlackLeatherJacket/Main Texture/[Albedo].jpg')
 
     // Now add the group to our scene
     this.scene.add(this.root);
