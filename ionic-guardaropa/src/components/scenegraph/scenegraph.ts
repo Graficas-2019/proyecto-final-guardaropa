@@ -212,8 +212,9 @@ export class SceneGraph {
       color: 0xffffff,
       map: textureMannequin
     });
-    if (!this.objLoader)
+    if (!this.objLoader) {
       this.objLoader = new OBJLoader();
+    }
     var playerOutIn, texture;
     this.objLoader.load(
       'models/mannequin/basicman.obj',
@@ -253,7 +254,9 @@ export class SceneGraph {
       color: 0xffffff,
       map: texture
     });
-    this.objLoader = new OBJLoader();
+    if (!this.objLoader) {
+      this.objLoader = new OBJLoader();
+    }
     var playerOutIn;
     this.objLoader.load(
       'models/clothes/BlackLeatherJacket/Black Leather Jacket.obj',
